@@ -12,7 +12,7 @@ WORKDIR ./dradis-ce
 
 #Clearly some hacks here to get things to work
 RUN \
-  sed -i 's|git@github.com:paper-trail-gem/paper_trail.git|https://github.com/paper-trail-gem/paper_trail.git|' Gemfile* && \
+  sed -i 's|git@\([^:]\+\):|https://\1/|' Gemfile* && \
   ruby bin/setup && \
   bundle exec thor dradis:reset || bundle exec thor dradis:reset
 
