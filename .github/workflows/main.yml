@@ -23,7 +23,7 @@ jobs:
 
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 5
+          fetch-depth: 1
 
       - uses: marceloprado/has-changed-path@v1
         id: changed-kali
