@@ -1,0 +1,53 @@
+name: docker-ci
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 5
+
+      - uses: marceloprado/has-changed-path@v1
+        id: changed-kali
+        with:
+          paths: kali.Dockerfile
+
+      - name: Build and push kali
+        if: steps.changed-kali.outputs.changed == 'true'
+        id: docker_build_kali
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: imander/kali:latest
+          file: kali.Dockerfile
+
+      - uses: marceloprado/has-changed-path@v1
+        id: changed-dradis
+        with:
+          paths: dradis.Dockerfile
+
+      - name: Build and push dradis
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: imander/dradis:latest
+          file: dradis.Dockerfile
